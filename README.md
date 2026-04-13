@@ -258,7 +258,7 @@ MIT License — free to use, modify, and distribute with attribution.
 
 ## 👤 Author
 
-**Your Name**
+**Tharun dev M C**
 - GitHub: [@your-username](https://github.com/tharundev-123)
 - LinkedIn: [your-linkedin](https://www.linkedin.com/in/tharundevmc/)
 
