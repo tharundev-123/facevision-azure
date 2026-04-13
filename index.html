@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FaceVision — Azure Face Detection</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- Animated background grid -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 28c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="16" cy="12" r="2" fill="currentColor" opacity="0.5"/>
+          <!-- scan lines -->
+          <line x1="2" y1="8" x2="7" y2="8" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="2" y1="12" x2="5" y2="12" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="25" y1="8" x2="30" y2="8" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="27" y1="12" x2="30" y2="12" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="logo-text">Face<span class="accent">Vision</span></span>
+    </div>
+    <nav class="nav">
+      <a href="#dashboard" class="nav-link active">Dashboard</a>
+      <a href="#results" class="nav-link">Results</a>
+    </nav>
+    <div class="header-status" id="connectionStatus">
+      <span class="status-dot"></span>
+      <span class="status-text">Not Connected</span>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">Azure Cognitive Services</div>
+    <h1 class="hero-title">
+      Detect Human<br/>
+      <span class="title-highlight">Faces<span class="cursor">_</span></span>
+      <br/>with AI Precision
+    </h1>
+    <p class="hero-sub">Connect your Azure Face API credentials, upload any image, and let machine intelligence map every face it finds — attributes, landmarks, and more.</p>
+    <div class="hero-scroll-hint">
+      <span>Configure below</span>
+      <div class="scroll-arrow">↓</div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section class="dashboard" id="dashboard">
+    <div class="section-label">// 01 — Configuration</div>
+
+    <div class="dashboard-grid">
+
+      <!-- Credentials Card -->
+      <div class="card card-credentials">
+        <div class="card-header">
+          <div class="card-icon">🔑</div>
+          <div>
+            <h2 class="card-title">Azure Credentials</h2>
+            <p class="card-desc">Enter your Face API key and endpoint</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">API Endpoint</label>
+          <div class="input-wrap">
+            <span class="input-prefix">https://</span>
+            <input type="text" id="azureEndpoint" class="form-input" placeholder="your-resource.cognitiveservices.azure.com"/>
+          </div>
+          <span class="form-hint">Your Azure Cognitive Services endpoint URL</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Subscription Key</label>
+          <div class="input-wrap">
+            <input type="password" id="azureKey" class="form-input" placeholder="••••••••••••••••••••••••••••••••"/>
+            <button class="toggle-key" id="toggleKey" title="Show/hide key">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <span class="form-hint">32-character hex key from Azure portal</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Detection Model</label>
+          <div class="select-wrap">
+            <select id="detectionModel" class="form-select">
+              <option value="detection_03">detection_03 (Latest — Recommended)</option>
+              <option value="detection_02">detection_02 (Balanced)</option>
+              <option value="detection_01">detection_01 (Classic)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="saveCredentials">
+          <span class="btn-icon">⚡</span>
+          Save & Validate Connection
+        </button>
+
+        <div class="connection-feedback" id="connectionFeedback"></div>
+      </div>
+
+      <!-- Upload Card -->
+      <div class="card card-upload">
+        <div class="card-header">
+          <div class="card-icon">📸</div>
+          <div>
+            <h2 class="card-title">Image Input</h2>
+            <p class="card-desc">Upload a photo or paste an image URL</p>
+          </div>
+        </div>
+
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-animation">
+            <div class="scan-ring ring-1"></div>
+            <div class="scan-ring ring-2"></div>
+            <div class="scan-ring ring-3"></div>
+            <div class="upload-icon">
+              <svg viewBox="0 0 48 48" fill="none">
+                <rect x="4" y="4" width="40" height="40" rx="8" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/>
+                <path d="M24 32V18M24 18l-6 6M24 18l6 6" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="24" cy="12" r="2" fill="var(--accent)"/>
+              </svg>
+            </div>
+          </div>
+          <p class="upload-title">Drop image here</p>
+          <p class="upload-sub">PNG, JPG, BMP, GIF — up to 6MB</p>
+          <input type="file" id="fileInput" accept="image/*" hidden/>
+          <button class="btn btn-outline" id="browseBtn">Browse Files</button>
+        </div>
+
+        <div class="divider"><span>or</span></div>
+
+        <div class="form-group">
+          <label class="form-label">Image URL</label>
+          <div class="input-wrap">
+            <input type="url" id="imageUrl" class="form-input" placeholder="https://example.com/photo.jpg"/>
+          </div>
+        </div>
+
+        <button class="btn btn-accent" id="detectBtn" disabled>
+          <span class="btn-icon">🔍</span>
+          Detect Faces
+          <div class="btn-loader" id="btnLoader"></div>
+        </button>
+      </div>
+
+      <!-- Options Card -->
+      <div class="card card-options">
+        <div class="card-header">
+          <div class="card-icon">⚙️</div>
+          <div>
+            <h2 class="card-title">Detection Options</h2>
+            <p class="card-desc">Choose what attributes to analyze</p>
+          </div>
+        </div>
+
+        <div class="options-grid">
+          <label class="toggle-item">
+            <input type="checkbox" class="attr-check" value="age" checked/>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Age Estimate</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" class="attr-check" value="gender" checked/>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Gender</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" class="attr-check" value="emotion" checked/>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Emotions</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" class="attr-check" value="smile"/>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Smile Score</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" class="attr-check" value="glasses"/>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Glasses Type</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" class="attr-check" value="facialHair"/>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Facial Hair</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" class="attr-check" value="headPose"/>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Head Pose</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" class="attr-check" value="blur"/>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Blur Level</span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <label class="toggle-item toggle-item--full">
+          <input type="checkbox" id="showLandmarks" checked/>
+          <span class="toggle-switch"></span>
+          <span class="toggle-label">Draw face bounding boxes on image</span>
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results-section hidden" id="results">
+    <div class="section-label">// 02 — Detection Results</div>
+
+    <div class="results-summary" id="resultsSummary">
+      <div class="summary-stat" id="statFaces">
+        <span class="stat-num">0</span>
+        <span class="stat-label">Faces Detected</span>
+      </div>
+      <div class="summary-stat">
+        <span class="stat-num" id="statTime">—</span>
+        <span class="stat-label">Response Time</span>
+      </div>
+      <div class="summary-stat">
+        <span class="stat-num" id="statModel">—</span>
+        <span class="stat-label">Model Used</span>
+      </div>
+    </div>
+
+    <div class="results-layout">
+      <!-- Canvas preview -->
+      <div class="canvas-wrap">
+        <canvas id="resultCanvas"></canvas>
+        <div class="canvas-overlay hidden" id="canvasOverlay">
+          <div class="no-image-msg">Upload an image to begin</div>
+        </div>
+      </div>
+
+      <!-- Face cards -->
+      <div class="faces-panel" id="facesPanel">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">👁</div>
+          <p>Results will appear here after detection</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- JSON Output -->
+    <div class="json-section">
+      <div class="json-header">
+        <span class="section-label" style="margin:0">// Raw API Response</span>
+        <button class="btn btn-tiny" id="copyJson">Copy JSON</button>
+      </div>
+      <pre class="json-output" id="jsonOutput">// Awaiting detection...</pre>
+    </div>
+  </section>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
