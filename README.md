@@ -14,7 +14,7 @@
 
 ## 🌐 Live Demo
 
-**[👉 View Live Site](https://your-username.github.io/facevision-azure/)**
+**[👉 View Live Site]([https://your-username.github.io/facevision-azure/](https://tharundev-123.github.io/facevision-azure/))**
 
 > ⚠️ You need your own Azure Face API credentials to use the live demo. See [Getting Started](#-getting-started) below.
 
